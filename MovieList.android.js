@@ -4,6 +4,7 @@
  */
  
  import DetailPage from './DetailPage'
+ import DrawerList from './DrawerList'
  
 import React, {
   AppRegistry,
@@ -15,6 +16,8 @@ import React, {
   View,
   TouchableHighlight,
   ToastAndroid,
+  RefreshControl,
+  DrawerLayoutAndroid,
  
 } from 'react-native';
 
@@ -31,12 +34,17 @@ class MovieList extends Component{
     super(props);
     this.renderMovie=this.renderMovie.bind(this);
     this.pressRow = this.pressRow.bind(this);
+   
     this.state = {
-        dataSource:new ListView.DataSource({
+      isRefreshing:false,
+      
+      dataSource:new ListView.DataSource({
           rowHasChanged:(row1,row2)=>row1!==row2,
         }),
+      
       loaded:false,
       id:2,
+     
     };
   }
 
@@ -64,15 +72,56 @@ class MovieList extends Component{
     if(!this.state.loaded){
        return this.renderLoadingView();
     }
-    return(
-      <ListView
-        dataSource={this.state.dataSource}
-        renderRow={this.renderMovie}
 
-      />
+  
+    return(
+      <DrawerLayoutAndroid
+        drawerWidth={300}
+        drawerPosition={DrawerLayoutAndroid.positions.Left}
+        renderNavigationView={() => <DrawerList/>}>
+      
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={this.renderMovie}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.isRefreshing}
+              onRefresh={this._onRefresh.bind(this)}
+              tintColor="#ff0000"
+              title="Loading..."
+              colors={['#ff0000', '#00ff00', '#0000ff']}
+             
+              />
+           }
+        />
+       </DrawerLayoutAndroid>
     );
   
   }
+
+
+
+
+_onRefresh(){
+  this.setState({
+          isRefreshing: true,
+      });
+
+ 
+   fetch(REQUEST_URL)
+      .then((response) => response.json())
+      .then((responseData) => {
+        this.setState({
+          dataSource:this.state.dataSource.cloneWithRows(responseData.movies),
+          loaded: true,
+          isRefreshing: false,
+        });
+      })
+      .done();
+  
+     
+}
+   
 
   renderLoadingView(){
     return(
@@ -86,6 +135,7 @@ class MovieList extends Component{
 
   renderMovie(movie){
     return(
+      
       <TouchableHighlight onPress={() => this.pressRow(movie.title,movie.id)}>
         <View style={styles.container}>
           <Image
@@ -108,6 +158,7 @@ class MovieList extends Component{
            </View>
         </View>
       </TouchableHighlight>
+       
     );
 
   }
