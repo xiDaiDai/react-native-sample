@@ -26,7 +26,11 @@ class DrawerList extends Component{
 		);
 	}
 
+	 
+
 }
+
+
 
 var styles = StyleSheet.create({
 		 container:{

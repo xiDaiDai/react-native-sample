@@ -7,7 +7,11 @@ import React,{
 		View,
 		Platform,
 		BackAndroid,
+		ToastAndroid,
+		TouchableHighlight,
 } from 'react-native';
+
+import ViewPager from './ViewPager'
 
 
 var URL ='http://gank.io/api/data/Android/10/2';
@@ -88,9 +92,11 @@ who: "onlylemi"*/
 var responseData = this.state.datas;
 return(
 		 <View style= {styles.container}>
-		 					<Text style = {styles.title}>
-		 						获得的参数: id={ this.state.id }
-		 					</Text>
+		 					<TouchableHighlight onPress={()=>this._onclick()}>
+				 					<Text style = {styles.title}>
+				 						获得的参数: id={ this.state.id }
+				 					</Text>
+		 					</TouchableHighlight>
 		 					<Text style = {styles.title}>
 		 						url={URL+this.state.id}
 		 					</Text>
@@ -111,6 +117,18 @@ return(
                  </Text>
            </View>
 	);
+	}
+
+	_onclick(){
+		ToastAndroid.show("onclicked",ToastAndroid.SHORT);
+
+		 this.props.navigator.push({
+		      title:'详情',
+		      name:'ViewPager',
+		      component:ViewPager,
+		         
+		      });
+
 	}
 
 	renderLoadingView(){

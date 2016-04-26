@@ -173,10 +173,10 @@ _onRefresh(){
       title:'详情',
       name:'DetailPage',
       component:DetailPage,
-      params:{
-        id:this.state.id
-      }
-    })
+        params:{
+          id:this.state.id
+        }
+      })
     }
 
 }
